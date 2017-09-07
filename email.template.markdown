@@ -20,4 +20,5 @@ Sincerely,
 **My Full Name**, Software Developer  
 [my@email.com](mailto:my@email.com) / [+47 555 55 555](callto:+4755555555)  
 ![Company - YES WE CAN](cid:logo-signature.png)  
-
+---
+p { font-family: Courier }
