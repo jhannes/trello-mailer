@@ -5,10 +5,10 @@
 # Markdown, and Mustache variables can be mixed in anywhere.
 to: "{{{to_recipients}}}"
 cc: "{{{cc_recipients}}}"
-subject: "Mobile Era - ikke gå glipp av Early Bird billettene!"
+subject: "This is a test email"
 messageRef: "{{idCard}}"
 attachments:
-  - signature.png
+  - logo-signature.png
 ---
 Hi {{recipient_name}}
 

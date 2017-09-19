@@ -20,7 +20,8 @@ _Files ending with `.local.js` are in `.gitignore`. Put your local settings here
 4. In order to see better what's going on, it's smart to set
    the enviroment variable `set DEBUG=axios,mail:imap`
 5. Create `settings.local.js` from `settings.template.js`
-   with your IMAP and Trello credentals
+   with your IMAP username, password and IMAP server and your Trello
+   API key and token, which you can get from https://trello.com/app-key
 6. Run `node mailer.local.js`
 7. Open your email client and see the messages in your drafts folder
 8. You may now tweak your messages if you want and send them at will
