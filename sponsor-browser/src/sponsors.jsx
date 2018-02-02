@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import {ToggleExpander} from "./components.jsx"
+import {Toggle} from "./components.jsx"
 
 class Sponsor extends React.Component {
     constructor(props) {
@@ -17,7 +17,7 @@ class Sponsor extends React.Component {
         const {sponsor} = this.props;
         const {name, domain} = sponsor;
         return <li>
-            <button onClick={() => this.handleClick()}>{name}</button>
+            <Toggle onClick={() => this.handleClick()}>{name}</Toggle>
             {domain ? " (@" + domain + ")" : " <unknown domain>"}
             {this.state.expanded && <SponsorDetails sponsor={sponsor} />}
         </li>;
@@ -50,7 +50,7 @@ class SponsorDetails extends React.Component {
             <div>
                 <div>Board: {board}, List: {list}, Contact: {contact}</div>
                 <div>{JSON.stringify(Object.keys(sponsor))}</div>
-                <div><button onClick={() => this.handleClickEmails()}>{emails.length} emails</button></div>
+                <div><Toggle onClick={() => this.handleClickEmails()}>{emails.length} emails</Toggle></div>
                 {expandedEmails && <SponsorEmails emails={emails} />}
             </div>);
     }
@@ -59,7 +59,7 @@ class SponsorDetails extends React.Component {
 class SponsorEmails extends React.Component {
     render() {
         const {emails} = this.props;
-        return <ul>{emails.map(email => <li>{email.date}: {email.from} -> {email.to}: {email.subject}</li>)}</ul>;
+        return <ul>{emails.map(email => <li key={email.messageId}>{email.date}: {email.from} -> {email.to}: {email.subject}</li>)}</ul>;
     }
 }
 
