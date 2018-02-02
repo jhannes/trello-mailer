@@ -26,6 +26,7 @@ function summarizeMailbox(connection, box) {
                 to: header.to ? header.to[0] : "to who?",
                 date: header.date[0],
                 from: header.from[0],
+                messageId: header['message-id'][0],
                 header
             };
         })
@@ -37,6 +38,11 @@ function mailSummary(boxes) {
     .then(connection => {
         return Promise.all(boxes.map(box => summarizeMailbox(connection, box)))
             .then(lists => [].concat.apply([], lists))
+            .then(mails => {
+                const uniqueMails = new Map();
+                mails.forEach(mail => uniqueMails.set(mail.messageId, mail))
+                return Array.from(uniqueMails.values());
+            })
             .then(e => {
                 connection.end();
                 return e;
@@ -119,4 +125,3 @@ Promise.all(idBoards.map(id => findSponsors(id)))
     //.then(sponsors => console.log(JSON.stringify(sponsors)))
     .then(sponsors => fs.writeJson('sponsor-browser/dist/sponsors.json', {sponsors}))
     .catch(err => console.error(err))
-    
