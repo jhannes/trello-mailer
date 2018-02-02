@@ -21,6 +21,7 @@
     "axios": "^0.16.2",
     "axios-debug-log": "^0.3.0",
     "debug": "^3.0.0",
+    "email-addresses": "^3.0.1",
     "imap-simple": "^3.2.0",
     "js-yaml": "^3.9.1",
     "juice": "^4.1.1",
