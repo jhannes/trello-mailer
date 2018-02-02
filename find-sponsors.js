@@ -1,5 +1,6 @@
 const debugImap = require('debug')('mail:imap');
 const addrs = require("email-addresses");
+const fs = require('fs-extra');
 
 var imaps = require('imap-simple');
 const settings = require('./settings.local.js'); 
@@ -115,6 +116,7 @@ const idBoards = ['58d4fad19f8050e3ef837a11', '565f53acd8080adcd0c1bb37'];
 
 Promise.all(idBoards.map(id => findSponsors(id)))
     .then(lists => [].concat.apply([], lists))
-    .then(sponsors => console.log(JSON.stringify(sponsors)))
+    //.then(sponsors => console.log(JSON.stringify(sponsors)))
+    .then(sponsors => fs.writeJson('sponsor-browser/dist/sponsors.json', {sponsors}))
     .catch(err => console.error(err))
     

@@ -18,14 +18,15 @@ class Application extends React.Component {
         fetch("./sponsors.json")
             .then(response => response.json())
             .then(json => {
-                json.sort((a,b) => a.name.localeCompare(b.name));
-                this.setState({sponsors: json});
+                this.setState({data: json});
             });
     }
 
     render() {
-        const {sponsors} = this.state;
-        if (sponsors) {
+        const {data} = this.state;
+        if (data) {
+            const {sponsors} = data;
+            sponsors.sort((a,b) => a.name.localeCompare(b.name));
             return <Sponsors sponsors={sponsors} />;
         }
         return <Loader />;

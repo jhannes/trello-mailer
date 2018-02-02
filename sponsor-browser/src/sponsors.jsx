@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import {ToggleExpander} from "./components.jsx"
+
 class Sponsor extends React.Component {
     constructor(props) {
         super(props);
@@ -14,8 +16,8 @@ class Sponsor extends React.Component {
     render() {
         const {sponsor} = this.props;
         const {name, domain} = sponsor;
-        return <li onClick={() => this.handleClick()}>
-            {name}
+        return <li>
+            <button onClick={() => this.handleClick()}>{name}</button>
             {domain ? " (@" + domain + ")" : " <unknown domain>"}
             {this.state.expanded && <SponsorDetails sponsor={sponsor} />}
         </li>;
@@ -26,18 +28,39 @@ Sponsor.propTypes = {
     sponsor: PropTypes.object.isRequired
 }
 
-function SponsorDetails(props) {
-    const {sponsor} = props;
-    const {list, board, customData} = sponsor;
-    let contact = null;
-    if (customData) {
-        contact = customData["Main contact (Email)"];
+class SponsorDetails extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {expandedEmails: false}
     }
-    return (
-        <div>
-            <div>Board: {board}, List: {list}, Contact: {contact}</div>
-            <div>{JSON.stringify(Object.keys(sponsor))}</div>
-        </div>);
+
+    handleClickEmails() {
+        this.setState({expandedEmails: !this.state.expandedEmails});
+    }
+
+    render() {
+        const {sponsor} = this.props;
+        const {expandedEmails} = this.state;
+        const {list, board, customData, emails} = sponsor;
+        let contact = null;
+        if (customData) {
+            contact = customData["Main contact (Email)"];
+        }
+        return (
+            <div>
+                <div>Board: {board}, List: {list}, Contact: {contact}</div>
+                <div>{JSON.stringify(Object.keys(sponsor))}</div>
+                <div><button onClick={() => this.handleClickEmails()}>{emails.length} emails</button></div>
+                {expandedEmails && <SponsorEmails emails={emails} />}
+            </div>);
+    }
+}
+
+class SponsorEmails extends React.Component {
+    render() {
+        const {emails} = this.props;
+        return <ul>{emails.map(email => <li>{email.date}: {email.from} -> {email.to}: {email.subject}</li>)}</ul>;
+    }
 }
 
 
