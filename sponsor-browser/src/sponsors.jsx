@@ -20,6 +20,14 @@ class Sponsor extends React.Component {
         this.setState({expanded: !this.state.expanded});
     }
 
+    handleContactChange(value) {
+        const {sponsor} = this.props;
+        firebase.database().ref(`sponsors/${sponsor.key}/customData`).update({"Main contact (Email)": value.contact});
+
+        const domain = addrs.parseAddressList(value.contact)[0].domain;
+        firebase.database().ref(`sponsors/${sponsor.key}`).update({"domain": domain});        
+    }
+
     render() {
         const {sponsor} = this.props;
         const {name, customData, domain} = sponsor;
@@ -52,14 +60,6 @@ class SponsorDetails extends React.Component {
         this.setState({expandedEmails: !this.state.expandedEmails});
     }
     
-    handleContactChange(value) {
-        const {sponsor} = this.props;
-        firebase.database().ref(`sponsors/${sponsor.key}/customData`).update({"Main contact (Email)": value.contact});
-
-        const domain = addrs.parseAddressList(value.contact)[0].domain;
-        firebase.database().ref(`sponsors/${sponsor.key}`).update({"domain": domain});        
-    }
-
     render() {
         const {sponsor} = this.props;
         const {expandedEmails} = this.state;
