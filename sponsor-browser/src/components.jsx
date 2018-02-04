@@ -19,3 +19,9 @@ export class Toggle extends React.Component {
     }
 
 }
+
+import {RIEInput} from "riek";
+
+export class EditableText extends RIEInput {
+
+}

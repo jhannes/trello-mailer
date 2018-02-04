@@ -3,7 +3,12 @@ import PropTypes from "prop-types";
 
 import firebase from "firebase";
 
-import {Toggle} from "./components.jsx"
+import {Toggle, EditableText} from "./components.jsx";
+import addrs from "email-addresses";
+
+function Loader() {
+    return <div>Loading...</div>;
+}
 
 class Sponsor extends React.Component {
     constructor(props) {
@@ -17,9 +22,16 @@ class Sponsor extends React.Component {
 
     render() {
         const {sponsor} = this.props;
-        const {name, domain} = sponsor;
+        const {name, customData, domain} = sponsor;
+        let contact = null;
+        if (customData) {
+            contact = customData["Main contact (Email)"];
+        }
         return <li>
             <Toggle onClick={() => this.handleClick()}>{name}</Toggle>
+            <span> | </span>
+            <strong>Contact:</strong> <EditableText propName="contact" value={contact || "<none>"} change={value => this.handleContactChange(value)} />
+            <span> | </span>
             {domain ? " (@" + domain + ")" : " <unknown domain>"}
             {this.state.expanded && <SponsorDetails sponsor={sponsor} />}
         </li>;
@@ -39,19 +51,23 @@ class SponsorDetails extends React.Component {
     handleClickEmails() {
         this.setState({expandedEmails: !this.state.expandedEmails});
     }
+    
+    handleContactChange(value) {
+        const {sponsor} = this.props;
+        firebase.database().ref(`sponsors/${sponsor.key}/customData`).update({"Main contact (Email)": value.contact});
+
+        const domain = addrs.parseAddressList(value.contact)[0].domain;
+        firebase.database().ref(`sponsors/${sponsor.key}`).update({"domain": domain});        
+    }
 
     render() {
         const {sponsor} = this.props;
         const {expandedEmails} = this.state;
-        const {list, board, customData, emails} = sponsor;
-        let contact = null;
-        if (customData) {
-            contact = customData["Main contact (Email)"];
-        }
+        const {list, board, emails, id} = sponsor;
+        const trelloLink = `https://trello.com/c/${id}`;
         return (
             <div>
-                <div>Board: {board}, List: {list}, Contact: {contact}</div>
-                <div>{JSON.stringify(Object.keys(sponsor))}</div>
+                <div>Board: <a href={trelloLink} target="trello">{board}</a>, List: {list}</div>
                 { emails && <div><Toggle onClick={() => this.handleClickEmails()}>{emails.length} emails</Toggle></div> }        
                 {expandedEmails && emails && <SponsorEmails emails={emails} />}
             </div>);
@@ -69,22 +85,38 @@ class SponsorEmails extends React.Component {
 export default class Sponsors extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {sponsors: []};
+        this.state = {};
     }
 
     componentWillMount() {
         const sponsorsRef = firebase.database().ref('sponsors');
-        sponsorsRef.on('value', snapshot => {
-            let sponsors = snapshot.val();
+        sponsorsRef.once('value', snapshot => {
+            console.log('value', snapshot.val());
+            const items = snapshot.val();
+            let sponsors = [];
+            for (let item in items) {
+                sponsors.push({ key: item, ...items[item] });
+            }
             sponsors.sort((a, b) => a.name.localeCompare(b.name));
             this.setState({sponsors: sponsors});
         }, err => {
             console.error("firebase", err);
-        });        
+        });       
+        sponsorsRef.on('child_changed', data => {
+            const value = data.val();
+            console.log("child changed", data.key, value);
+            const {sponsors} = this.state;
+            const sponsor = sponsors.findIndex(s => s.key == data.key);
+            sponsors[sponsor] = { key: data.key, ...value };
+            this.setState({sponsors: sponsors});
+        }) 
     }
 
     render() {
         const {sponsors} = this.state;
+        if (!sponsors) {
+            return <Loader />;
+        }
         return <ul>{sponsors.map(sponsor => <Sponsor key={sponsor.id} sponsor={sponsor} />)}</ul>;
     }
 }
