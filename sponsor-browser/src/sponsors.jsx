@@ -1,6 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
+import firebase from "firebase";
+
 import {Toggle} from "./components.jsx"
 
 class Sponsor extends React.Component {
@@ -50,8 +52,8 @@ class SponsorDetails extends React.Component {
             <div>
                 <div>Board: {board}, List: {list}, Contact: {contact}</div>
                 <div>{JSON.stringify(Object.keys(sponsor))}</div>
-                <div><Toggle onClick={() => this.handleClickEmails()}>{emails.length} emails</Toggle></div>
-                {expandedEmails && <SponsorEmails emails={emails} />}
+                { emails && <div><Toggle onClick={() => this.handleClickEmails()}>{emails.length} emails</Toggle></div> }        
+                {expandedEmails && emails && <SponsorEmails emails={emails} />}
             </div>);
     }
 }
@@ -64,11 +66,25 @@ class SponsorEmails extends React.Component {
 }
 
 
-export default function Sponsors(props) {
-    const {sponsors} = props;
-    return <ul>{sponsors.map(sponsor => <Sponsor key={sponsor.id} sponsor={sponsor} />)}</ul>;
-}
+export default class Sponsors extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {sponsors: []};
+    }
 
-Sponsors.propTypes = {
-    sponsors: PropTypes.arrayOf(Object).isRequired    
+    componentWillMount() {
+        const sponsorsRef = firebase.database().ref('sponsors');
+        sponsorsRef.on('value', snapshot => {
+            let sponsors = snapshot.val();
+            sponsors.sort((a, b) => a.name.localeCompare(b.name));
+            this.setState({sponsors: sponsors});
+        }, err => {
+            console.error("firebase", err);
+        });        
+    }
+
+    render() {
+        const {sponsors} = this.state;
+        return <ul>{sponsors.map(sponsor => <Sponsor key={sponsor.id} sponsor={sponsor} />)}</ul>;
+    }
 }
