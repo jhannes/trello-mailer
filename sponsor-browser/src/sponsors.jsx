@@ -91,7 +91,6 @@ export default class Sponsors extends React.Component {
     componentWillMount() {
         const sponsorsRef = firebase.database().ref('sponsors');
         sponsorsRef.once('value', snapshot => {
-            console.log('value', snapshot.val());
             const items = snapshot.val();
             let sponsors = [];
             for (let item in items) {
@@ -104,7 +103,6 @@ export default class Sponsors extends React.Component {
         });       
         sponsorsRef.on('child_changed', data => {
             const value = data.val();
-            console.log("child changed", data.key, value);
             const {sponsors} = this.state;
             const sponsor = sponsors.findIndex(s => s.key == data.key);
             sponsors[sponsor] = { key: data.key, ...value };

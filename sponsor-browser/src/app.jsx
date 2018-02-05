@@ -63,7 +63,6 @@ class Application extends React.Component {
             }
         });
         window.addEventListener("hashchange", () => {
-            console.log("Hashchange");
             this.setState({route: window.location.hash});
         });
     }

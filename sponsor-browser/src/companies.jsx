@@ -36,7 +36,7 @@ class Sponsor extends React.Component {
 
     render() {
         const {sponsor} = this.props;
-        const {name, mainContact, secondaryContact, domains} = sponsor;
+        const {name, mainContact, domains} = sponsor;
         return <li>
             <Toggle onClick={() => this.handleClick()}>{name}</Toggle>
             <span> | </span>
@@ -74,7 +74,7 @@ class SponsorDetails extends React.Component {
     render() {
         const {sponsor} = this.props;
         const {expandedEmails} = this.state;
-        const {list, board, emails, id} = sponsor;
+        const {emails} = sponsor;
         return (
             <div>
                 { Object.values(sponsor.sponsorships).map(sponsorship => <Sponsorship key={sponsorship.board} sponsorship={sponsorship} />) }
@@ -113,7 +113,6 @@ export default class SponsorCompanies extends React.Component {
 
         companiesRef.on('child_changed', data => {
             const value = data.val();
-            console.log("child changed", data.key, value);
             const {companies} = this.state;
             const sponsor = companies.findIndex(s => s.key == data.key);
             companies[sponsor] = { key: data.key, ...value };
