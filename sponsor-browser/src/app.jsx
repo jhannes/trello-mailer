@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import Sponsors from "./sponsors.jsx";
+import SponsorCompanies from "./companies.jsx";
 
 function Loader() {
     return <div>Loading...</div>;
@@ -48,7 +49,8 @@ class Application extends React.Component {
         super(props);
         this.state = {
             awaitingLogin: true,
-            user: null
+            user: null,
+            route: window.location.hash
         };
     }
 
@@ -59,7 +61,11 @@ class Application extends React.Component {
             } else {
                 this.setState({user, awaitingLogin: false});
             }
-        })
+        });
+        window.addEventListener("hashchange", () => {
+            console.log("Hashchange");
+            this.setState({route: window.location.hash});
+        });
     }
 
     handleLogin(user) {
@@ -67,12 +73,15 @@ class Application extends React.Component {
     }
 
     render() {
-        const {user, awaitingLogin} = this.state;
+        const {user, awaitingLogin, route} = this.state;
         if (awaitingLogin) {
             return <Loader />;
         }
         if (!user) {
             return <Login onLogin={user => this.handleLogin(user)} />;
+        }
+        if (route.startsWith("#/companies")) {
+            return <SponsorCompanies />;
         }
         return <Sponsors />;
     }
