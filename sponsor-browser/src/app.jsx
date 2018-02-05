@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import Sponsors from "./sponsors.jsx";
 import SponsorCompanies from "./companies.jsx";
 
 function Loader() {
@@ -72,17 +71,14 @@ class Application extends React.Component {
     }
 
     render() {
-        const {user, awaitingLogin, route} = this.state;
+        const {user, awaitingLogin} = this.state;
         if (awaitingLogin) {
             return <Loader />;
         }
         if (!user) {
             return <Login onLogin={user => this.handleLogin(user)} />;
         }
-        if (route.startsWith("#/companies")) {
-            return <SponsorCompanies />;
-        }
-        return <Sponsors />;
+        return <SponsorCompanies />;
     }
 
 }
