@@ -74,7 +74,7 @@ class SponsorDetails extends React.Component {
     render() {
         const {sponsor} = this.props;
         const {expandedEmails} = this.state;
-        const {emails} = sponsor;
+        const emails = Object.values(sponsor.emails || {});
         return (
             <div>
                 { Object.values(sponsor.sponsorships).map(sponsorship => <Sponsorship key={sponsorship.board} sponsorship={sponsorship} />) }
