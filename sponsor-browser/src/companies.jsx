@@ -10,7 +10,7 @@ function Loader() {
     return <div>Loading...</div>;
 }
 
-class Sponsor extends React.Component {
+export class Sponsor extends React.Component {
     constructor(props) {
         super(props);
         this.state = {expanded: true};
@@ -40,7 +40,8 @@ class Sponsor extends React.Component {
         return <li>
             <Toggle onClick={() => this.handleClick()}>{name}</Toggle>
             <span> | </span>
-            <strong>Contact:</strong> <EditableText propName="contact" value={mainContact || "<none>"} change={value => this.handleContactChange(value)} />
+            <strong>Contact:</strong>
+            <EditableText propName="contact" value={mainContact || "<none>"} change={value => this.handleContactChange(value)} />
             <span> | </span>
             {domains ? domains.map(d => <span key={d}>@{d} </span>) : " <unknown domain>"}
             {this.state.expanded && <SponsorDetails sponsor={sponsor} />}
@@ -57,7 +58,7 @@ class Sponsorship extends React.Component {
         const {sponsorship} = this.props;
         const {board, id, list} = sponsorship;
         const trelloLink = `https://trello.com/c/${id}`;
-        return <div>{board} <a href={trelloLink} target="trello">{list}</a></div>;
+        return <div>{board.toString()} <a href={trelloLink} target="trello">{list}</a></div>;
     }
 }
 
@@ -77,7 +78,7 @@ class SponsorDetails extends React.Component {
         const emails = Object.values(sponsor.emails || {});
         return (
             <div>
-                { Object.values(sponsor.sponsorships).map(sponsorship => <Sponsorship key={sponsorship.board} sponsorship={sponsorship} />) }
+                { Object.values(sponsor.sponsorships).map(sponsorship => <Sponsorship sponsorship={sponsorship} />) }
                 { emails && <div><Toggle onClick={() => this.handleClickEmails()}>{emails.length} emails</Toggle></div> }        
                 {expandedEmails && emails && <SponsorEmails emails={emails} />}
             </div>);
@@ -91,7 +92,7 @@ class SponsorEmails extends React.Component {
     }
 }
 
-export default class SponsorCompanies extends React.Component {
+export class SponsorCompanies extends React.Component {
     constructor(props) {
         super(props);
         this.state = {companies: null};

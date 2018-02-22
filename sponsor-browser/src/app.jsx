@@ -1,7 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import SponsorCompanies from "./companies.jsx";
+import {SponsorCompanies} from "./companies.jsx";
+
 
 function Loader() {
     return <div>Loading...</div>;

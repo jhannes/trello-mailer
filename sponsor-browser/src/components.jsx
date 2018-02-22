@@ -25,3 +25,8 @@ import {RIEInput} from "riek";
 export class EditableText extends RIEInput {
 
 }
+
+
+export function Loading() {
+    return <div>Loading...</div>;
+}
