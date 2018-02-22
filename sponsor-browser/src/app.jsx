@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 
 import {SponsorCompanies} from "./companies.jsx";
+import {Trello} from "./trello.jsx";
 
 
 function Loader() {
@@ -78,6 +79,9 @@ class Application extends React.Component {
         }
         if (!user) {
             return <Login onLogin={user => this.handleLogin(user)} />;
+        }
+        if (this.state.route.startsWith("#/trello")) {
+            return <Trello accessKey="aa791afba48c840c4594258a0394dbf3" />;
         }
         return <SponsorCompanies />;
     }

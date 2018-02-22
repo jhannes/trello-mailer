@@ -47,7 +47,6 @@ module.exports = {
             "error",
             "always"
         ],
-        "class-methods-use-this": "error",
         "comma-dangle": "error",
         "comma-spacing": [
             "error",
@@ -153,7 +152,6 @@ module.exports = {
         "no-continue": "error",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
-        "no-else-return": "error",
         "no-empty-function": "error",
         "no-eq-null": "off",
         "no-eval": "error",
