@@ -12,8 +12,9 @@ function parseDesc(desc) {
 
 function toRecipient(card) {
     const recipient = {id: card.id, company: card.name, name: card.name, labels: card.labels, url: card.url };
+    
 
-    for (const statusLine of card.status) {
+    for (const statusLine of parseDesc(card.desc)) {
         const tmp = statusLine.match(/^\*\*([^*]+)\*\*: (.*)$/);
         if (tmp) {
             recipient[tmp[1]] = tmp[2];
@@ -56,8 +57,8 @@ program
 
 program
     .command('emails')
-    .option('--label [value]', 'Specify Slack organization', (v, accu) => accu.concat(v), [])
     .option('-l, --list <listId>', 'Process all the cards on the specified list')
+    .option('--label [value]', 'Filter card to labels (can be specified repeatedly)', (v, accu) => accu.concat(v), [])
     .option('-u, --user <username>', 'Filter cards by the specified username')
     .option('--me', 'Filter cards to mine')
     .option('--debug', 'Only list matching cards')
@@ -66,23 +67,31 @@ program
     .option('--template <filename>', 'Use specified email template')
     .option('--email', 'Save draft emails to IMAP Drafts folder')
     .action((options) => {
+        if (!options.list) {
+            throw new Error('list required');
+        }
+
         trelloGet(`1/lists/${options.list}/cards`, {members: true})
-            .then(result => {
-                let cards = result;
+            .then(cards => {
+                if (options.me) {
+                    return trelloGet('1/members/me')
+                        .then(me => [cards, me.username]);
+                }
+                return [cards];
+            })
+            .then(([cards, username]) => {
                 if (options.label) {
                     for (const label of options.label) {
                         cards = cards.filter(card => card.labels.map(l => l.name).includes(label));
                     }
                 }
-                if (options.user) {
+                if (username) {
+                    cards = cards.filter(card => card.members.map(m => m.username).includes(username));
+                } else if (options.user) {
                     cards = cards.filter(card => card.members.map(m => m.username).includes(options.user));
                 }
 
-                const recipients = cards.map(card => ({
-                    id: card.id, name: card.name, url: card.url,
-                    labels: card.labels.map(l => l.name),
-                    users: card.members.map(m => m.username),
-                    status: parseDesc(card.desc)}))
+                const recipients = cards
                     .map(toRecipient);
                 if (options.debug) {
                     console.log(recipients);
@@ -98,7 +107,7 @@ program
                 } else {
                     throw new Error('What to do??');
                 }
-            });
+            }).catch(console.error);
     });
 
 program.parse(process.argv);
