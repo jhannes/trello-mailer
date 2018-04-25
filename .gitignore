@@ -1,3 +1,5 @@
 node_modules
 *.local.*
 /logo-signature.png
+/logo-signature-small.png
+/*.pdf

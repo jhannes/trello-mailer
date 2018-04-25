@@ -20,6 +20,7 @@
   "dependencies": {
     "axios": "^0.16.2",
     "axios-debug-log": "^0.3.0",
+    "commander": "^2.15.1",
     "debug": "^3.0.0",
     "email-addresses": "^3.0.1",
     "firebase": "^4.9.1",
