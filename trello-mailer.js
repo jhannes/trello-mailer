@@ -38,10 +38,13 @@ program
     });
     
 program
-    .command('show-boards')
-    .option('-o, --organization <organizationId>', 'List all boards for the specified organization')
-    .action((options) => {
-        trelloGet(`1/organizations/${options.organization}/boards`)
+    .command('show-boards [organizationId]')
+    .description('List the boards belonging to an organization')
+    .action((organization) => {
+        if (!organization) {
+            return program.outputHelp();
+        }
+        trelloGet(`1/organizations/${organization}/boards`)
             .then(result => result.map(board => ({id: board.id, name: board.name})))
             .then(console.log);
     });
@@ -57,7 +60,7 @@ program
 
 program
     .command('emails')
-    .option('-l, --list <listId>', 'Process all the cards on the specified list')
+    .option('-l, --list [listId]', 'Process all the cards on the specified list')
     .option('--label [value]', 'Filter card to labels (can be specified repeatedly)', (v, accu) => accu.concat(v), [])
     .option('-u, --user <username>', 'Filter cards by the specified username')
     .option('--me', 'Filter cards to mine')
@@ -68,7 +71,7 @@ program
     .option('--email', 'Save draft emails to IMAP Drafts folder')
     .action((options) => {
         if (!options.list) {
-            throw new Error('list required');
+            return program.outputHelp();
         }
 
         trelloGet(`1/lists/${options.list}/cards`, {members: true})
