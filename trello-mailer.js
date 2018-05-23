@@ -1,5 +1,7 @@
 /* eslint no-console: 0 */
 
+// TODO: Use https://www.npmjs.com/package/emailjs-mime-builder instead of mimemessage
+
 const program = require('commander');
 
 const email = require('./lib/email');
